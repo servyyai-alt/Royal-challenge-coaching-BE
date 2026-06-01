@@ -6,8 +6,8 @@ const gallerySchema = new mongoose.Schema({
   imageUrl: { type: String, required: true },
   category: {
     type: String,
-    enum: ['Events', 'Competitions', 'Achievements', 'Classroom', 'Activities'],
-    default: 'Events'
+    enum: ['Courses', 'Programs', 'Achievements', 'Competitions', 'Classrooms', 'Activities', 'Faculty'],
+    default: 'Courses'
   },
   featured: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
