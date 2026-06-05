@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const enquiryRoutes = require('./routes/enquiries');
+const tutorRegistrationRoutes = require('./routes/tutorRegistrations');
 const courseRoutes = require('./routes/courses');
 const galleryRoutes = require('./routes/gallery');
 const contactRoutes = require('./routes/contact');
@@ -25,6 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/enquiries', enquiryRoutes);
+app.use('/api/tutor-registrations', tutorRegistrationRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/contact', contactRoutes);

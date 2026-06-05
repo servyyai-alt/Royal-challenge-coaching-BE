@@ -1,8 +1,34 @@
 const Enquiry = require('../models/Enquiry');
+const { sendMail } = require('../utils/mailer');
+
+const escapeHtml = (value = '') =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
 exports.createEnquiry = async (req, res) => {
   try {
     const enquiry = await Enquiry.create(req.body);
+
+    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL;
+    if (adminEmail) {
+      const subject = `New Student Registration: ${enquiry.name}`;
+      const html = `
+        <h2>New Student Registration</h2>
+        <p><strong>Name:</strong> ${escapeHtml(enquiry.name)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(enquiry.phone)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(enquiry.email)}</p>
+        <p><strong>Course:</strong> ${escapeHtml(enquiry.course)}</p>
+        <p><strong>Grade:</strong> ${escapeHtml(enquiry.grade || 'N/A')}</p>
+        <p><strong>Board:</strong> ${escapeHtml(enquiry.board || 'N/A')}</p>
+        <p><strong>Message:</strong> ${escapeHtml(enquiry.message || 'N/A')}</p>
+      `;
+      sendMail({ to: adminEmail, subject, html }).catch(() => {});
+    }
+
     res.status(201).json({ success: true, message: 'Enquiry submitted successfully!', data: enquiry });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
