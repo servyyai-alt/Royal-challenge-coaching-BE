@@ -13,7 +13,7 @@ exports.createTutorRegistration = async (req, res) => {
   try {
     const tutor = await TutorRegistration.create(req.body);
 
-    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL;
+    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.EMAIL_USER;
     if (adminEmail) {
       const subject = `New Tutor Registration: ${tutor.name}`;
       const html = `
@@ -35,7 +35,11 @@ exports.createTutorRegistration = async (req, res) => {
         <p><strong>Qualification:</strong> ${escapeHtml(tutor.qualification)}</p>
         <p><strong>Fees Expectation:</strong> ${escapeHtml(tutor.feesExpectation)}</p>
       `;
-      sendMail({ to: adminEmail, subject, html }).catch(() => {});
+      try {
+        await sendMail({ to: adminEmail, subject, html });
+      } catch (mailErr) {
+        console.error('Failed to send tutor registration email:', mailErr.message);
+      }
     }
 
     res.status(201).json({ success: true, message: 'Tutor registration submitted successfully!', data: tutor });

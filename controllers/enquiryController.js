@@ -13,7 +13,7 @@ exports.createEnquiry = async (req, res) => {
   try {
     const enquiry = await Enquiry.create(req.body);
 
-    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL;
+    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.EMAIL_USER;
     if (adminEmail) {
       const subject = `New Student Registration: ${enquiry.name}`;
       const html = `
@@ -26,7 +26,11 @@ exports.createEnquiry = async (req, res) => {
         <p><strong>Board:</strong> ${escapeHtml(enquiry.board || 'N/A')}</p>
         <p><strong>Message:</strong> ${escapeHtml(enquiry.message || 'N/A')}</p>
       `;
-      sendMail({ to: adminEmail, subject, html }).catch(() => {});
+      try {
+        await sendMail({ to: adminEmail, subject, html });
+      } catch (mailErr) {
+        console.error('Failed to send student registration email:', mailErr.message);
+      }
     }
 
     res.status(201).json({ success: true, message: 'Enquiry submitted successfully!', data: enquiry });
