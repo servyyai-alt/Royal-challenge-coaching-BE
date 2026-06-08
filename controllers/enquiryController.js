@@ -26,11 +26,9 @@ exports.createEnquiry = async (req, res) => {
         <p><strong>Board:</strong> ${escapeHtml(enquiry.board || 'N/A')}</p>
         <p><strong>Message:</strong> ${escapeHtml(enquiry.message || 'N/A')}</p>
       `;
-      try {
-        await sendMail({ to: adminEmail, subject, html });
-      } catch (mailErr) {
+      void sendMail({ to: adminEmail, subject, html }).catch((mailErr) => {
         console.error('Failed to send student registration email:', mailErr.message);
-      }
+      });
     }
 
     res.status(201).json({ success: true, message: 'Enquiry submitted successfully!', data: enquiry });

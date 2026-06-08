@@ -35,11 +35,9 @@ exports.createTutorRegistration = async (req, res) => {
         <p><strong>Qualification:</strong> ${escapeHtml(tutor.qualification)}</p>
         <p><strong>Fees Expectation:</strong> ${escapeHtml(tutor.feesExpectation)}</p>
       `;
-      try {
-        await sendMail({ to: adminEmail, subject, html });
-      } catch (mailErr) {
+      void sendMail({ to: adminEmail, subject, html }).catch((mailErr) => {
         console.error('Failed to send tutor registration email:', mailErr.message);
-      }
+      });
     }
 
     res.status(201).json({ success: true, message: 'Tutor registration submitted successfully!', data: tutor });
