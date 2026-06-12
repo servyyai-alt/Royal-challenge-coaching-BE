@@ -8,9 +8,9 @@ const replySchema = new mongoose.Schema({
 
 const enquirySchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
-  email: { type: String, required: true, lowercase: true },
+  email: { type: String, lowercase: true },
   phone: { type: String, required: true },
-  grade: { type: String },
+  grade: { type: String, required: true },
   course: {
     type: String,
     required: true,
